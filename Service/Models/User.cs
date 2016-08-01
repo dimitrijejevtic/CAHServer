@@ -20,7 +20,7 @@ namespace Service.Models
                     return true;
                 }
                 else return false;
-            }catch(Exception e)
+            }catch(Exception)
             {
                 return false;
             }

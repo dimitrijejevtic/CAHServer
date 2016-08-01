@@ -8,7 +8,9 @@ namespace Service.Models
     public enum GameState
     {
         Pregame=1,
-        Game=2,
-        PostGame=3
+        RoundStart=2,
+        PlayTime=3,
+        RoundEnd=4,
+        PostGame=5
     }
 }

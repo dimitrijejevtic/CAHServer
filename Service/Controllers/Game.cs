@@ -8,37 +8,33 @@ namespace Service.Controllers
 {
     public class Game
     {
-        private bool nameSet = false;
-        private BCard BCard { get; set; }
-        private List<User> Users { get; set; }
-        private List<BCard> OldBcards { get; set; }
-        private IDictionary<User, Card> PlayedCards { get; set; }
+        private bool nameSet = false; 
+        private BCard BCard { get; set; } // current round Black card
+        private List<User> Users { get; set; } // users in current game
+        private List<BCard> OldBcards { get; set; } // used Black cards
+        private Dictionary<User, string> PlayedCards { get; set; } // played cards in current round
+        private User Judge { get; set; }
 
-        public GameState GameState { get; set; }
+        public GameState GameState { get; set; } // current gamestate (Pregame >| RoundStart > PlayTime > RoundEnd >| PostGame)
+        private string _gamename;
         public string GameName
         {
-            get { return this.GameName; }
-            set
-            {
-                if (!nameSet)
-                {
-                    throw new Exception("GameName already set");
-                }
-                else { this.GameName = value; }
-            }
+            get { return this._gamename; }        
         }        
         public int Round { get; set; }       
-        public IDictionary<User,int> UserPoints { get; set; }       
+        public Dictionary<User,int> UserPoints { get; set; }    //total points of all rounds   
 
         public Game()
         {
             this.GameState = GameState.Pregame;
             this.Users = new List<User>();
+            UserPoints = new Dictionary<User, int>();
+            PlayedCards = new Dictionary<User, string>();
         }
         public string CreateGame()
         {
-            nameSet = true;
-            return GameName = Guid.NewGuid().ToString();
+            _gamename = new Random().Next(0, 9999).ToString();
+            return GameName;      
         }
         public void AddPlayer(User user)
         {
@@ -63,23 +59,60 @@ namespace Service.Controllers
             foreach(var user in Users)
             {
                 UserPoints.Add(user, 0);
+                PlayedCards.Add(user, null);               
             }
-            GameState = GameState.Game;
+            
+            GameState = GameState.RoundStart;
+            ChangeJudge();
         }
         public void NextRound(User winner)
         {
-            if (GameState==GameState.Game)
+            if (GameState==GameState.PlayTime)
             {
                 Round++;
+                ChangeJudge();
                 OldBcards.Add(BCard);
                 UserPoints[winner] += 1;
-                //BCard = DB.NewBcard(); get new black card from bd
+                //BCard = NewBCard(); get new black card from bd
+                foreach(var key in PlayedCards.Keys)
+                {
+                    PlayedCards[key] = null;
+                }
             }
 
         }
         public bool PlayerMove(User user,Card card)
         {
-            return true;
+            if (GameState == GameState.PlayTime)
+            {
+                if (Judge != user)
+                {
+                    PlayedCards[user] = card.CardId;
+                    return true;
+                }else return false;
+            }
+            else return false;
+        }
+        public void ChangeJudge()
+        {
+            if (GameState == GameState.RoundStart)
+            {
+                Judge = Users.ElementAt((Users.IndexOf(Judge) + Round) % Users.Count);
+                GameState = GameState.PlayTime;
+            }
+        }
+
+        public void EndGame()
+        {
+            if (GameState == GameState.RoundEnd)
+            {
+                GameState = GameState.PostGame;
+            }
+        }
+
+        private BCard NewBCard()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Service
 {
     public class WebApiApplication : System.Web.HttpApplication
     {
+        static GC GC;      
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -18,6 +19,7 @@ namespace Service
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            GC = new GC();           
         }
     }
 }

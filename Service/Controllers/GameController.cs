@@ -11,10 +11,11 @@ namespace Service.Controllers
     {
         public IEnumerable<List<User>> Get()
         {
-            List<User> users = new List<Models.User>();
-           users.Add(new User { UserId = "asd", Name = "pera" });
-            users.Add(new Models.User { UserId = "asd", Name = "pera" });
+            List<User> users = new List<User>();
+            users.Add(new User { UserId = "asd", Name = "pera" });
+            users.Add(new User { UserId = "asd", Name = "pera" });
             yield return users;
+            
         }
     }
 }
