@@ -43,15 +43,18 @@ namespace Service.Controllers
                 Users.Add(user);
             }
         }
+        /// <summary>
+        ///Removes user from game. User can be removed from game at any GameState 
+        /// </summary>
+        /// <param name="user">User to be removed</param>
         public void RemovePlayer(User user)
-        {
-            if (GameState == GameState.Pregame)
-            {
+        {            
                 if (Users.Contains(user))
                 {
                     Users.Remove(user);
-                }
-            }
+                    PlayedCards.Remove(user);
+                    UserPoints.Remove(user);
+                }            
         }
         public void StartGame()
         {
@@ -93,7 +96,7 @@ namespace Service.Controllers
             }
             else return false;
         }
-        public void ChangeJudge()
+        private void ChangeJudge()
         {
             if (GameState == GameState.RoundStart)
             {
