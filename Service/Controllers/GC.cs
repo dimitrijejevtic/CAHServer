@@ -11,8 +11,11 @@ namespace Service
 {
     public class GC
     {
-        public List<Game> Games { get; set; }
-
+        public static List<Game> Games { get; set; }
+        public GC()
+        {
+            Games = new List<Game>();
+        }
         public string NewGame()
         {
             Game newGame = new Game();
@@ -32,12 +35,15 @@ namespace Service
         /// <returns></returns>
         public async Task<GameInfoViewModel> GetFullGameInfo(string gamename, User requester)
         {
-            throw new NotImplementedException();
+            return FindGame(gamename).GetGameInfo();
         }
         #region GameState=Pregame
-        public async Task<GameInfoViewModel> CreateGame()
+        public static async Task<GameInfoViewModel> CreateGame()
         {
-            throw new NotImplementedException();
+            Game game = new Game();
+            game.CreateGame();
+            Games.Add(game);
+            return game.GetGameInfo();
         }
 
         public async Task<GameInfoViewModel> AddPlayerToGame()
@@ -63,6 +69,7 @@ namespace Service
         {
             throw new NotImplementedException();
         }
+
         #endregion
 
     }

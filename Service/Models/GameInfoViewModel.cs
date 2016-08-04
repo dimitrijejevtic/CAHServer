@@ -8,7 +8,13 @@ namespace Service.ViewModels
 {
     public class GameInfoViewModel
     {
+        public string Object = "GameInfoViewModel";
         public string GameName { get; set; }
         public List<User> Users{ get; set; }
+        public BCard BCard { get; set; }
+        public User Judge { get; set; }
+        public GameState State { get; set; }
+        public int Round { get; set; }
+
     }
 }

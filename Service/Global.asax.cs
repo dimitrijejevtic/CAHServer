@@ -11,7 +11,7 @@ namespace Service
 {
     public class WebApiApplication : System.Web.HttpApplication
     {
-        static GC GC;      
+        static GC GC = new GC();      
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();

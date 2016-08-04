@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Service.ViewModels;
 
 namespace Service.Controllers
 {
@@ -10,9 +11,9 @@ namespace Service.Controllers
     {
         private bool nameSet = false; 
         private BCard BCard { get; set; } // current round Black card
-        private List<User> Users { get; set; } // users in current game
         private List<BCard> OldBcards { get; set; } // used Black cards
         private Dictionary<User, string> PlayedCards { get; set; } // played cards in current round
+        private List<User> Users { get; set; } // users in current game
         private User Judge { get; set; }
 
         public GameState GameState { get; set; } // current gamestate (Pregame >| RoundStart > PlayTime > RoundEnd >| PostGame)
@@ -31,6 +32,19 @@ namespace Service.Controllers
             UserPoints = new Dictionary<User, int>();
             PlayedCards = new Dictionary<User, string>();
         }
+
+        internal GameInfoViewModel GetGameInfo()
+        {
+            GameInfoViewModel gvm = new GameInfoViewModel();
+            gvm.Round = this.Round;
+            gvm.Judge = this.Judge;
+            gvm.Users = this.Users;
+            gvm.State = this.GameState;
+            gvm.GameName = this.GameName;
+            gvm.BCard = this.BCard;
+            return gvm;
+        }
+
         public string CreateGame()
         {
             _gamename = new Random().Next(0, 9999).ToString();

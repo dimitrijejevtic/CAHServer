@@ -25,5 +25,10 @@ namespace Service.Models
                 return false;
             }
         }
+        public override string ToString()
+        {
+            return UserId;
+        }
+
     }
 }
