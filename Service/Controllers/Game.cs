@@ -44,6 +44,13 @@ namespace Service.Controllers
             gvm.BCard = this.BCard;
             return gvm;
         }
+        internal PreGameViewModel GetPreGameInfo()
+        {
+            PreGameViewModel pgvm = new PreGameViewModel();
+            pgvm.Users = Users;
+            pgvm.GameName = GameName;
+            return pgvm;
+        }
 
         public string CreateGame()
         {
@@ -98,6 +105,16 @@ namespace Service.Controllers
             }
 
         }
+
+        internal bool IsJudge(string gamename)
+        {
+            var user = FindUser(gamename);
+            if (Judge == user)
+            {
+                return true;
+            }else return false;
+        }
+
         public bool PlayerMove(User user,Card card)
         {
             if (GameState == GameState.PlayTime)
@@ -130,6 +147,10 @@ namespace Service.Controllers
         private BCard NewBCard()
         {
             throw new NotImplementedException();
+        }
+        public User FindUser(string playerid)
+        {
+            return Users.Single(x => x.UserId == playerid);
         }
     }
 }

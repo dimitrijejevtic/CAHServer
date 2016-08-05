@@ -23,7 +23,7 @@ namespace Service
             return newGame.GameName;
         }
 
-        public Game FindGame(string gamename)
+        public static Game FindGame(string gamename)
         {
             return Games.Where(x => x.GameName == gamename).Single();
         }
@@ -33,44 +33,80 @@ namespace Service
         /// <param name="gamename">Gamename whose information is requested</param>
         /// <param name="requester">User that is requesting Gamename information</param>
         /// <returns></returns>
-        public async Task<GameInfoViewModel> GetFullGameInfo(string gamename, User requester)
+        public static async Task<GameInfoViewModel> GetFullGameInfo(string gamename, User requester)
         {
             return FindGame(gamename).GetGameInfo();
         }
+        public static async Task<PreGameViewModel> GetPreGameInfo(string gamename)
+        {
+            return FindGame(gamename).GetPreGameInfo();
+        }
         #region GameState=Pregame
-        public static async Task<GameInfoViewModel> CreateGame()
+        public static async Task<PreGameViewModel> CreateGame(string playername)
         {
             Game game = new Game();
             game.CreateGame();
+            User creator = new User() { Name = playername };
+            game.AddPlayer(creator);
             Games.Add(game);
+            return game.GetPreGameInfo();
+        }
+
+        public static async Task<PreGameViewModel> AddPlayerToGame(string gamename,string playername)
+        {
+            User user = new User() { Name = playername };
+            Game game = FindGame(gamename);
+            game.AddPlayer(user);
+            return game.GetPreGameInfo();
+
+        }
+        public static async Task<PreGameViewModel> RemovePlayerFromGame(string gamename, string playername,string userid)
+        {
+            User user = new User()
+            {   UserId = userid, Name = playername};
+            var game = FindGame(gamename);
+            game.RemovePlayer(user);
+            return game.GetPreGameInfo();
+        }
+
+        public static async Task<GameInfoViewModel> StartGame(string gamename)
+        {
+            var game = FindGame(gamename);
+            game.StartGame();
             return game.GetGameInfo();
-        }
-
-        public async Task<GameInfoViewModel> AddPlayerToGame()
-        {
-            throw new NotImplementedException();
-        }
-        public async Task<GameInfoViewModel> RemovePlayerFromGame()
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<GameInfoViewModel> StartGame()
-        {
-            throw new NotImplementedException(); 
         }
         #endregion
         #region GameState=GameTime
-        public async Task<GameInfoViewModel> PlayerPickedCard()
+        public static async Task<GameInfoViewModel> PlayerPickedCard(string gamename, string playerid,string cardid)
         {
-            throw new NotImplementedException();
+            var game = FindGame(gamename);
+            var user = game.FindUser(playerid);
+            //Implementation for cardbank needed
+            //var card=bank.FindCard(cardid);
+            var card = new Card() { CardId = cardid };
+            game.PlayerMove(user, card);
+            return game.GetGameInfo();
         }
-        public async Task<GameInfoViewModel> PickWinner()
+        public static async Task<ICAHViewModel> PickWinner(string gamename,string winnerid)
         {
-            throw new NotImplementedException();
+            var game = FindGame(gamename);
+            if (!game.IsJudge(winnerid))
+            {
+                var winner = game.FindUser(winnerid);
+                game.NextRound(winner);
+                return game.GetGameInfo();
+            }
+            else return new ErrorViewModel() { ErrorMessage = "Judge cant be winner" };
         }
 
         #endregion
-
+        public static async Task<ICAHViewModel> Test(string param)
+        {
+            if (param == "1")
+            {
+                return Games.First().GetPreGameInfo();
+            }
+            else return new ErrorViewModel() { ErrorMessage = "asdasda" };
+        }
     }
 }

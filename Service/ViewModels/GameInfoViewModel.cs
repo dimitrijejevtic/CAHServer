@@ -6,7 +6,7 @@ using System.Web;
 
 namespace Service.ViewModels
 {
-    public class GameInfoViewModel
+    public class GameInfoViewModel:ICAHViewModel
     {
         public string Object = "GameInfoViewModel";
         public string GameName { get; set; }

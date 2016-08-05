@@ -14,7 +14,7 @@ namespace Service.Controllers
     {
         //GET api/Game/Get
         [Route("")]
-        public IEnumerable<GameInfoViewModel> Get()
+        public IEnumerable<GameInfoViewModel> GetDefault()
         {
             Game game = new Game();
             User host = new User { Name = "Pera", UserId = Guid.NewGuid().ToString() };
@@ -36,7 +36,10 @@ namespace Service.Controllers
             yield return gmv;
 
         }
+        #region Statuses
+
         //GET api/Game/GameInfo
+        [HttpGet]
         [Route("GameInfo")]
         public IEnumerable<GameInfoViewModel> GameInfo()
         {
@@ -59,13 +62,81 @@ namespace Service.Controllers
             GameInfoViewModel gmv = game.GetGameInfo();
             yield return gmv;
         }
-        [Route("CreateGame")]
-        public IEnumerable<GameInfoViewModel> CreateGame()
+        [HttpGet]
+        [Route("GetPreGameInfo")]
+        public IEnumerable<PreGameViewModel> GetPreGameInfo( string gamename)
         {
-            Task<GameInfoViewModel> gvmtask = Task.Run(GC.CreateGame);
-            Task.WaitAll(gvmtask);
-            var gvm = gvmtask.Result;
-            yield return gvm;
+            Task<PreGameViewModel> pgvmtask = Task.Run(() => GC.GetPreGameInfo(gamename));
+            Task.WaitAll(pgvmtask);
+            yield return pgvmtask.Result;
         }
+        #endregion
+        #region Pregame
+        [HttpGet]
+        [Route("CreateGame")]
+        public IEnumerable<PreGameViewModel> CreateGame(string playername)
+        {
+            Task<PreGameViewModel> pgvmtask = Task.Run(()=>GC.CreateGame(playername));
+            Task.WaitAll(pgvmtask);
+            var vm = pgvmtask.Result;
+            yield return vm;
+        }
+        [HttpGet]
+        [Route("AddPlayer")]
+        public IEnumerable<PreGameViewModel> AddPlayer(string gamename,string playername)
+        {
+            Task<PreGameViewModel> pgvmtask = Task.Run(() => GC.AddPlayerToGame(gamename,playername));
+            Task.WaitAll(pgvmtask);
+            var vm = pgvmtask.Result;
+            yield return vm;
+        }
+        [HttpGet]
+        [Route("RemovePlayer")]
+        public IEnumerable<PreGameViewModel> RemovePlayer(string gamename, string playername, string userid)
+        {
+            Task<PreGameViewModel> pgvmtask = Task.Run(() => GC.RemovePlayerFromGame(gamename, playername, userid));
+            Task.WaitAll(pgvmtask);
+            yield return pgvmtask.Result;
+        }
+        [HttpGet]
+        [Route("StartGame")]
+        public IEnumerable<GameInfoViewModel> StartGame(string gamename)
+        {
+            Task<GameInfoViewModel> gvmtask = Task.Run(()=>GC.StartGame(gamename));
+            Task.WaitAll(gvmtask);
+            yield return gvmtask.Result;
+        }
+        #endregion
+        #region GameTime
+
+        [HttpGet]
+        [Route("PlayerMove")]
+        public IEnumerable<GameInfoViewModel> PlayerMove(string gamename, string playerid, string cardid)
+        {
+            Task<GameInfoViewModel> gvmtask = Task.Run(() => GC.PlayerPickedCard(gamename, playerid, cardid));
+            Task.WaitAll(gvmtask);
+            yield return gvmtask.Result;
+        }
+
+        [HttpGet]
+        [Route("PickWinner")]
+        public IEnumerable<ICAHViewModel> PickWinner(string gamename,string winnerid)
+        {
+            Task<ICAHViewModel> gvmtask = Task.Run(() => GC.PickWinner(gamename, winnerid));
+            Task.WaitAll(gvmtask);
+            yield return gvmtask.Result;
+        }
+        #endregion
+
+        #region Testregion
+        [HttpGet]
+        [Route("TestError")]
+        public IEnumerable<ICAHViewModel> TestError(string number)
+        {
+            Task<ICAHViewModel> gvmtask = Task.Run(() => GC.Test(number));
+            Task.WaitAll(gvmtask);
+            yield return gvmtask.Result;
+        }
+        #endregion
     }
 }

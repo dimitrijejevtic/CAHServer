@@ -9,7 +9,10 @@ namespace Service.Models
     {
         public string UserId { get; set; }
         public string Name { get; set; }
-
+        public User()
+        {
+            UserId = Guid.NewGuid().ToString();
+        }
         public override bool Equals(object obj)
         {
             try
