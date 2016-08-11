@@ -31,6 +31,13 @@ namespace Service.Controllers
             this.Users = new List<User>();
             UserPoints = new Dictionary<User, int>();
             PlayedCards = new Dictionary<User, string>();
+            OldBcards = new List<BCard>();
+        }
+        internal JudgeViewModel GetJudgeViewModel()
+        {
+            JudgeViewModel jvm = new JudgeViewModel();
+            jvm.PickedCards = this.PlayedCards;
+            return jvm;
         }
 
         internal GameInfoViewModel GetGameInfo()
@@ -51,6 +58,14 @@ namespace Service.Controllers
             pgvm.GameName = GameName;
             return pgvm;
         }
+        internal EndGameViewModel GetEndGameInfo()
+        {
+            EndGameViewModel egvm = new EndGameViewModel();
+            egvm.UserPoints = UserPoints;
+            egvm.Rounds = Round;
+            egvm.GameState = GameState;
+            return egvm;
+        }
 
         public string CreateGame()
         {
@@ -63,6 +78,7 @@ namespace Service.Controllers
             {
                 Users.Add(user);
             }
+            else throw new ErrorViewModel() { ErrorMessage = "Gamestate is not Pregame" };
         }
         /// <summary>
         ///Removes user from game. User can be removed from game at any GameState 
@@ -91,24 +107,26 @@ namespace Service.Controllers
         }
         public void NextRound(User winner)
         {
-            if (GameState==GameState.PlayTime)
+            if (GameState == GameState.PlayTime)
             {
                 Round++;
                 ChangeJudge();
                 OldBcards.Add(BCard);
                 UserPoints[winner] += 1;
                 //BCard = NewBCard(); get new black card from bd
-                foreach(var key in PlayedCards.Keys)
+                foreach (var key in PlayedCards.Keys)
                 {
                     PlayedCards[key] = null;
                 }
+                GameState = GameState.RoundEnd;
             }
+            else throw new ErrorViewModel() { ErrorMessage = "Gamestate is not PlayTime" };
 
         }
 
-        internal bool IsJudge(string gamename)
+        internal bool IsJudge(string playerid)
         {
-            var user = FindUser(gamename);
+            var user = FindUser(playerid);
             if (Judge == user)
             {
                 return true;
@@ -129,21 +147,26 @@ namespace Service.Controllers
         }
         private void ChangeJudge()
         {
-            if (GameState == GameState.RoundStart)
+            if (GameState == GameState.RoundStart||GameState==GameState.PlayTime)
             {
                 Judge = Users.ElementAt((Users.IndexOf(Judge) + Round) % Users.Count);
                 GameState = GameState.PlayTime;
             }
+            else throw new ErrorViewModel() { ErrorMessage = "Gamestate is not RoundStart" };
         }
 
-        public void EndGame()
+        public void EndGame(string playerid)
         {
-            if (GameState == GameState.RoundEnd)
+            if (GameState == GameState.RoundEnd || GameState == GameState.PlayTime)
             {
-                GameState = GameState.PostGame;
+                var caller = FindUser(playerid);
+                if (caller != null)
+                {
+                    GameState = GameState.PostGame;
+                }
             }
+            else throw new ErrorViewModel() { ErrorMessage = "Gamestate is not RoundEnd or PlayTime" };
         }
-
         private BCard NewBCard()
         {
             throw new NotImplementedException();

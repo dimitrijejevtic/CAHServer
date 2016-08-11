@@ -42,34 +42,52 @@ namespace Service
             return FindGame(gamename).GetPreGameInfo();
         }
         #region GameState=Pregame
-        public static async Task<PreGameViewModel> CreateGame(string playername)
+        public static async Task<ICAHViewModel> CreateGame(string playername)
         {
-            Game game = new Game();
-            game.CreateGame();
-            User creator = new User() { Name = playername };
-            game.AddPlayer(creator);
-            Games.Add(game);
-            return game.GetPreGameInfo();
+            try
+            {
+                Game game = new Game();
+                game.CreateGame();
+                User creator = new User() { Name = playername };
+                game.AddPlayer(creator);
+                Games.Add(game);
+                return game.GetPreGameInfo();
+            }catch(ErrorViewModel erv)
+            {
+                return erv;
+            }
         }
 
-        public static async Task<PreGameViewModel> AddPlayerToGame(string gamename,string playername)
+        public static async Task<ICAHViewModel> AddPlayerToGame(string gamename,string playername)
         {
-            User user = new User() { Name = playername };
-            Game game = FindGame(gamename);
-            game.AddPlayer(user);
-            return game.GetPreGameInfo();
+            try
+            {
+                User user = new User() { Name = playername };
+                Game game = FindGame(gamename);
+                game.AddPlayer(user);
+                return game.GetPreGameInfo();
+            }catch(ErrorViewModel erv)
+            {
+                return erv;
+            }
 
         }
-        public static async Task<PreGameViewModel> RemovePlayerFromGame(string gamename, string playername,string userid)
+        public static async Task<ICAHViewModel> RemovePlayerFromGame(string gamename, string playername,string userid)
         {
-            User user = new User()
-            {   UserId = userid, Name = playername};
-            var game = FindGame(gamename);
-            game.RemovePlayer(user);
-            return game.GetPreGameInfo();
+            try
+            {
+                User user = new User()
+                { UserId = userid, Name = playername };
+                var game = FindGame(gamename);
+                game.RemovePlayer(user);
+                return game.GetPreGameInfo();
+            }catch(ErrorViewModel erv)
+            {
+                return erv;
+            }
         }
 
-        public static async Task<GameInfoViewModel> StartGame(string gamename)
+        public static async Task<ICAHViewModel> StartGame(string gamename)
         {
             var game = FindGame(gamename);
             game.StartGame();
@@ -77,7 +95,7 @@ namespace Service
         }
         #endregion
         #region GameState=GameTime
-        public static async Task<GameInfoViewModel> PlayerPickedCard(string gamename, string playerid,string cardid)
+        public static async Task<ICAHViewModel> PlayerPickedCard(string gamename, string playerid,string cardid)
         {
             var game = FindGame(gamename);
             var user = game.FindUser(playerid);
@@ -99,6 +117,23 @@ namespace Service
             else return new ErrorViewModel() { ErrorMessage = "Judge cant be winner" };
         }
 
+        public static async Task<ICAHViewModel> EndGame(string gamename, string playerid)
+        {
+            var game = FindGame(gamename);
+            game.EndGame(playerid);
+            return game.GetEndGameInfo();
+            
+        }
+        public static async Task<ICAHViewModel> JudgeList(string gamename,string playerid)
+        {
+            var game = FindGame(gamename);
+            if (game.IsJudge(playerid))
+            {
+                JudgeViewModel jvm = game.GetJudgeViewModel();
+                return jvm;
+            }
+            else return new ErrorViewModel() { ErrorMessage = "You are not judge" };
+        }
         #endregion
         public static async Task<ICAHViewModel> Test(string param)
         {

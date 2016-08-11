@@ -74,35 +74,35 @@ namespace Service.Controllers
         #region Pregame
         [HttpGet]
         [Route("CreateGame")]
-        public IEnumerable<PreGameViewModel> CreateGame(string playername)
+        public IEnumerable<ICAHViewModel> CreateGame(string playername)
         {
-            Task<PreGameViewModel> pgvmtask = Task.Run(()=>GC.CreateGame(playername));
+            Task<ICAHViewModel> pgvmtask = Task.Run(()=>GC.CreateGame(playername));
             Task.WaitAll(pgvmtask);
             var vm = pgvmtask.Result;
             yield return vm;
         }
         [HttpGet]
         [Route("AddPlayer")]
-        public IEnumerable<PreGameViewModel> AddPlayer(string gamename,string playername)
+        public IEnumerable<ICAHViewModel> AddPlayer(string gamename,string playername)
         {
-            Task<PreGameViewModel> pgvmtask = Task.Run(() => GC.AddPlayerToGame(gamename,playername));
+            Task<ICAHViewModel> pgvmtask = Task.Run(() => GC.AddPlayerToGame(gamename,playername));
             Task.WaitAll(pgvmtask);
             var vm = pgvmtask.Result;
             yield return vm;
         }
         [HttpGet]
         [Route("RemovePlayer")]
-        public IEnumerable<PreGameViewModel> RemovePlayer(string gamename, string playername, string userid)
+        public IEnumerable<ICAHViewModel> RemovePlayer(string gamename, string playername, string userid)
         {
-            Task<PreGameViewModel> pgvmtask = Task.Run(() => GC.RemovePlayerFromGame(gamename, playername, userid));
+            Task<ICAHViewModel> pgvmtask = Task.Run(() => GC.RemovePlayerFromGame(gamename, playername, userid));
             Task.WaitAll(pgvmtask);
             yield return pgvmtask.Result;
         }
         [HttpGet]
         [Route("StartGame")]
-        public IEnumerable<GameInfoViewModel> StartGame(string gamename)
+        public IEnumerable<ICAHViewModel> StartGame(string gamename)
         {
-            Task<GameInfoViewModel> gvmtask = Task.Run(()=>GC.StartGame(gamename));
+            Task<ICAHViewModel> gvmtask = Task.Run(()=>GC.StartGame(gamename));
             Task.WaitAll(gvmtask);
             yield return gvmtask.Result;
         }
@@ -111,9 +111,9 @@ namespace Service.Controllers
 
         [HttpGet]
         [Route("PlayerMove")]
-        public IEnumerable<GameInfoViewModel> PlayerMove(string gamename, string playerid, string cardid)
+        public IEnumerable<ICAHViewModel> PlayerMove(string gamename, string playerid, string cardid)
         {
-            Task<GameInfoViewModel> gvmtask = Task.Run(() => GC.PlayerPickedCard(gamename, playerid, cardid));
+            Task<ICAHViewModel> gvmtask = Task.Run(() => GC.PlayerPickedCard(gamename, playerid, cardid));
             Task.WaitAll(gvmtask);
             yield return gvmtask.Result;
         }
@@ -127,7 +127,16 @@ namespace Service.Controllers
             yield return gvmtask.Result;
         }
         #endregion
-
+        #region Postgame
+        [HttpGet]
+        [Route("EndGame")]
+        public IEnumerable<ICAHViewModel> EndGame(string gamename, string playerid)
+        {
+            Task<ICAHViewModel> gvmtask = Task.Run(() => GC.EndGame(gamename,playerid));
+            Task.WaitAll(gvmtask);
+            yield return gvmtask.Result;
+        }
+        #endregion
         #region Testregion
         [HttpGet]
         [Route("TestError")]

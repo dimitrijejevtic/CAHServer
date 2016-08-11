@@ -5,9 +5,9 @@ using System.Web;
 
 namespace Service.ViewModels
 {
-    public class ErrorViewModel:ICAHViewModel
+    public class ErrorViewModel:Exception,ICAHViewModel
     {
         public string Ojbect = "ErrorViewModel";
-        public string ErrorMessage = "DSSDASD";
+        public string ErrorMessage { get; set; }
     }
 }
