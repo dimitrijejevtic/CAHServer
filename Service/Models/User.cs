@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
 namespace Service.Models
 {
+    [NotMapped]
     public class User
     {
         public string UserId { get; set; }

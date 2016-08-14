@@ -7,7 +7,7 @@ namespace Service.Models
 {
 	public class BCard
 	{
-        public string BCardId { get; set; }
+        public string BCardID { get; set; }
         public string Text { get; set; }
     }
 }

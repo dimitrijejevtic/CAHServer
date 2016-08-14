@@ -12,6 +12,7 @@ namespace Service
     public class GC
     {
         public static List<Game> Games { get; set; }
+        private CAHDB db = new CAHDB();
         public GC()
         {
             Games = new List<Game>();
@@ -40,6 +41,15 @@ namespace Service
         public static async Task<PreGameViewModel> GetPreGameInfo(string gamename)
         {
             return FindGame(gamename).GetPreGameInfo();
+        }
+        public static async Task<ICAHViewModel> GetLobby()
+        {
+            var games = new ListGamesViewModel();
+            foreach(var game in Games)
+            {
+                games.Games.Add(game.GameName);
+            }
+            return games;
         }
         #region GameState=Pregame
         public static async Task<ICAHViewModel> CreateGame(string playername)
@@ -101,7 +111,7 @@ namespace Service
             var user = game.FindUser(playerid);
             //Implementation for cardbank needed
             //var card=bank.FindCard(cardid);
-            var card = new Card() { CardId = cardid };
+            var card = new Card() { CardID = cardid };
             game.PlayerMove(user, card);
             return game.GetGameInfo();
         }

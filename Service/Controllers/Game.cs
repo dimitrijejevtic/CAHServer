@@ -69,8 +69,12 @@ namespace Service.Controllers
 
         public string CreateGame()
         {
-            _gamename = new Random().Next(0, 9999).ToString();
-            return GameName;      
+            if (!nameSet)
+            {
+                _gamename = new Random().Next(0, 9999).ToString();
+                return GameName;
+            }
+            else return GameName;
         }
         public void AddPlayer(User user)
         {
@@ -139,7 +143,7 @@ namespace Service.Controllers
             {
                 if (Judge != user)
                 {
-                    PlayedCards[user] = card.CardId;
+                    PlayedCards[user] = card.CardID;
                     return true;
                 }else return false;
             }

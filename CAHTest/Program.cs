@@ -22,9 +22,9 @@ namespace CAHTest
             game.AddPlayer(p2);
             game.StartGame();
 
-            Card cd = new Card { Text = "aasdasdd", CardId="3231" };
-            Card cc = new Card { Text = "ddddd", CardId = "ssda" };
-            Card dd = new Card { Text = "ccccccc", CardId = "ssda" };
+            Card cd = new Card { Text = "aasdasdd", CardID="3231" };
+            Card cc = new Card { Text = "ddddd", CardID = "ssda" };
+            Card dd = new Card { Text = "ccccccc", CardID = "ssda" };
             game.PlayerMove(host, cd);
             game.PlayerMove(p1, cc);
             game.PlayerMove(p2, dd);
