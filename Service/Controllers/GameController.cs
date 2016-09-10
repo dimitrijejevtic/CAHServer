@@ -40,31 +40,16 @@ namespace Service.Controllers
 
         //GET api/Game/GameInfo
         [HttpGet]
-        [Route("GameInfo")]
-        public IEnumerable<GameInfoViewModel> GameInfo()
+        [Route("GameInfoViewModel")]
+        public IEnumerable<ICAHViewModel> GameInfo(string gamename)
         {
-            Game game = new Game();
-            User host = new User { Name = "Pera", UserId = Guid.NewGuid().ToString() };
-            User p1 = new User { Name = "mika", UserId = Guid.NewGuid().ToString() };
-            User p2 = new User { Name = "zika", UserId = Guid.NewGuid().ToString() };
-            game.CreateGame();
-            game.AddPlayer(host);
-            game.AddPlayer(p1);
-            game.AddPlayer(p2);
-            game.StartGame();
-
-            Card cd = new Card { Text = "aasdasdd", CardID = "3231" };
-            Card cc = new Card { Text = "ddddd", CardID = "ssda" };
-            Card dd = new Card { Text = "ccccccc", CardID = "ssda" };
-            game.PlayerMove(host, cd);
-            game.PlayerMove(p1, cc);
-            game.PlayerMove(p2, dd);
-            GameInfoViewModel gmv = game.GetGameInfo();
-            yield return gmv;
+            Task<ICAHViewModel> givmtask = Task.Run(() => GC.GetFullGameInfo(gamename, null));
+            Task.WaitAll(givmtask);
+            yield return givmtask.Result;
         }
         [HttpGet]
         [Route("GetPreGameInfo")]
-        public IEnumerable<PreGameViewModel> GetPreGameInfo( string gamename)
+        public IEnumerable<PreGameViewModel> GetPreGameInfo(string gamename)
         {
             Task<PreGameViewModel> pgvmtask = Task.Run(() => GC.GetPreGameInfo(gamename));
             Task.WaitAll(pgvmtask);
@@ -133,6 +118,14 @@ namespace Service.Controllers
             Task<ICAHViewModel> gvmtask = Task.Run(() => GC.PickWinner(gamename, winnerid));
             Task.WaitAll(gvmtask);
             yield return gvmtask.Result;
+        }
+        [HttpGet]
+        [Route("GetJVM")]
+        public IEnumerable<ICAHViewModel> GetJVM(string gamename,string playerid)
+        {
+            Task<ICAHViewModel> jgvmtask = Task.Run(() => GC.JudgeList(gamename, playerid));
+            Task.WaitAll(jgvmtask);
+            yield return jgvmtask.Result;
         }
         #endregion
         #region Postgame

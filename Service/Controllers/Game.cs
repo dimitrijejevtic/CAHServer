@@ -9,6 +9,7 @@ namespace Service.Controllers
 {
     public class Game
     {
+        private CAHDB db = new CAHDB();
         private bool nameSet = false; 
         private BCard BCard { get; set; } // current round Black card
         private List<BCard> OldBcards { get; set; } // used Black cards
@@ -36,7 +37,16 @@ namespace Service.Controllers
         internal JudgeViewModel GetJudgeViewModel()
         {
             JudgeViewModel jvm = new JudgeViewModel();
-            jvm.PickedCards = this.PlayedCards;
+            Dictionary<User, string> judgecards = new Dictionary<User, string>();
+            foreach(var user in Users)
+            {
+                if (!IsJudge(user.UserId))
+                {
+                    judgecards.Add(user, PlayedCards[user]);
+                }
+            }
+            jvm.Users = judgecards.Keys.ToList();
+            jvm.Cards = judgecards.Values.ToList();          
             return jvm;
         }
 
@@ -56,12 +66,14 @@ namespace Service.Controllers
             PreGameViewModel pgvm = new PreGameViewModel();
             pgvm.Users = Users;
             pgvm.GameName = GameName;
+            pgvm.GameState = this.GameState;
             return pgvm;
         }
         internal EndGameViewModel GetEndGameInfo()
         {
             EndGameViewModel egvm = new EndGameViewModel();
-            egvm.UserPoints = UserPoints;
+            egvm.Users = UserPoints.Keys.ToList();
+            egvm.Points = UserPoints.Values.ToList();
             egvm.Rounds = Round;
             egvm.GameState = GameState;
             return egvm;
@@ -107,7 +119,8 @@ namespace Service.Controllers
             }
             
             GameState = GameState.RoundStart;
-            ChangeJudge();
+            SetJudge();
+            BCard = NewBCard();
         }
         public void NextRound(User winner)
         {
@@ -116,6 +129,7 @@ namespace Service.Controllers
                 Round++;
                 ChangeJudge();
                 OldBcards.Add(BCard);
+                BCard = NewBCard();
                 UserPoints[winner] += 1;
                 //BCard = NewBCard(); get new black card from bd
                 foreach (var key in PlayedCards.Keys)
@@ -158,6 +172,11 @@ namespace Service.Controllers
             }
             else throw new ErrorViewModel() { ErrorMessage = "Gamestate is not RoundStart" };
         }
+        private void SetJudge()
+        {
+            Judge = Users.First();
+            
+        }
 
         public void EndGame(string playerid)
         {
@@ -173,7 +192,15 @@ namespace Service.Controllers
         }
         private BCard NewBCard()
         {
-            throw new NotImplementedException();
+            while (true)
+            {
+                var cards = db.BCards.ToList();
+                var card = cards.ElementAt(new Random().Next(0, cards.Count));
+                if (!OldBcards.Contains(card))
+                {
+                    return card;
+                }
+            }
         }
         public User FindUser(string playerid)
         {

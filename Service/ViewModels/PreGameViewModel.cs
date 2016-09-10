@@ -11,5 +11,6 @@ namespace Service.ViewModels
         public string Object = "PreGameViewModel";
         public string GameName { get; set; }
         public List<User> Users { get; set; }
+        public GameState GameState { get; set; }
     }
 }

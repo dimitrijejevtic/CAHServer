@@ -8,6 +8,8 @@ namespace Service.ViewModels
 {
     public class JudgeViewModel:ICAHViewModel
     {
-        public Dictionary<User,string> PickedCards{ get; set; }
+        public string Object = "JudgeViewModel";
+        public List<User> Users { get; set; }
+        public List<string> Cards { get; set; }
     }
 }

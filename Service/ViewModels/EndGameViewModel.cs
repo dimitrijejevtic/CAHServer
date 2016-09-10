@@ -9,7 +9,8 @@ namespace Service.ViewModels
     public class EndGameViewModel:ICAHViewModel
     {
         public string Object = "EndGameViewModel";
-        public Dictionary<User,int> UserPoints { get; set; }
+        public List<User> Users { get; set; }
+        public List<int> Points{ get; set; }
         public int Rounds { get; set; }
         public GameState GameState  { get; set; }
     }

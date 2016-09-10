@@ -10,5 +10,9 @@ namespace Service.ViewModels
     {
         public string Object = "ListGamesViewModel";
         public List<string> Games { get; set; }
+        public ListGamesViewModel()
+        {
+            Games = new List<string>();
+        }
     }
 }

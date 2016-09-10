@@ -34,7 +34,7 @@ namespace Service
         /// <param name="gamename">Gamename whose information is requested</param>
         /// <param name="requester">User that is requesting Gamename information</param>
         /// <returns></returns>
-        public static async Task<GameInfoViewModel> GetFullGameInfo(string gamename, User requester)
+        public static async Task<ICAHViewModel> GetFullGameInfo(string gamename, User requester)
         {
             return FindGame(gamename).GetGameInfo();
         }
