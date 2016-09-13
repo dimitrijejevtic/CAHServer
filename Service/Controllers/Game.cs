@@ -119,26 +119,30 @@ namespace Service.Controllers
             }
             
             GameState = GameState.RoundStart;
+            GameState = GameState.PlayTime;
             SetJudge();
             BCard = NewBCard();
         }
         public void NextRound(User winner)
         {
-            if (GameState == GameState.PlayTime)
-            {
-                Round++;
-                ChangeJudge();
-                OldBcards.Add(BCard);
-                BCard = NewBCard();
-                UserPoints[winner] += 1;
-                //BCard = NewBCard(); get new black card from bd
-                foreach (var key in PlayedCards.Keys)
+
+                if (GameState == GameState.PlayTime)
                 {
-                    PlayedCards[key] = null;
+                    Round++;
+                    ChangeJudge();
+                    OldBcards.Add(BCard);
+                    BCard = NewBCard();
+                    UserPoints[winner] += 1;
+                    Dictionary<User, string> newPlayed = new Dictionary<User, string>();
+                    foreach (var key in PlayedCards.Keys)
+                    {
+                        newPlayed.Add(key, null);
+                    }
+                    PlayedCards = newPlayed;
+                    //GameState = GameState.RoundEnd;
                 }
-                GameState = GameState.RoundEnd;
-            }
-            else throw new ErrorViewModel() { ErrorMessage = "Gamestate is not PlayTime" };
+                else throw new ErrorViewModel() { ErrorMessage = "Gamestate is not PlayTime" };
+
 
         }
 
@@ -174,8 +178,7 @@ namespace Service.Controllers
         }
         private void SetJudge()
         {
-            Judge = Users.First();
-            
+            Judge = Users.First(); 
         }
 
         public void EndGame(string playerid)
