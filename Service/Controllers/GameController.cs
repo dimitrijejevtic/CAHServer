@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace Service.Controllers
 {
@@ -41,6 +42,7 @@ namespace Service.Controllers
         //GET api/Game/GameInfo
         [HttpGet]
         [Route("GameInfoViewModel")]
+        [ResponseType(typeof(GameInfoViewModel))]
         public IEnumerable<ICAHViewModel> GameInfo(string gamename)
         {
             Task<ICAHViewModel> givmtask = Task.Run(() => GC.GetFullGameInfo(gamename, null));
@@ -49,6 +51,7 @@ namespace Service.Controllers
         }
         [HttpGet]
         [Route("GetPreGameInfo")]
+        [ResponseType(typeof(PreGameViewModel))]
         public IEnumerable<PreGameViewModel> GetPreGameInfo(string gamename)
         {
             Task<PreGameViewModel> pgvmtask = Task.Run(() => GC.GetPreGameInfo(gamename));
@@ -57,6 +60,7 @@ namespace Service.Controllers
         }
         [HttpGet]
         [Route("GetLobby")]
+        [ResponseType(typeof(ListGamesViewModel))]
         public IEnumerable<ICAHViewModel> GetLobby()
         {
             Task<ICAHViewModel> lgvmtask = Task.Run(GC.GetLobby);
@@ -67,6 +71,7 @@ namespace Service.Controllers
         #region Pregame
         [HttpGet]
         [Route("CreateGame")]
+        [ResponseType(typeof(PreGameViewModel))]
         public IEnumerable<ICAHViewModel> CreateGame(string playername)
         {
             Task<ICAHViewModel> pgvmtask = Task.Run(()=>GC.CreateGame(playername));
@@ -76,6 +81,7 @@ namespace Service.Controllers
         }
         [HttpGet]
         [Route("AddPlayer")]
+        [ResponseType(typeof(PreGameViewModel))]
         public IEnumerable<ICAHViewModel> AddPlayer(string gamename,string playername)
         {
             Task<ICAHViewModel> pgvmtask = Task.Run(() => GC.AddPlayerToGame(gamename,playername));
@@ -85,6 +91,7 @@ namespace Service.Controllers
         }
         [HttpGet]
         [Route("RemovePlayer")]
+        [ResponseType(typeof(PreGameViewModel))]
         public IEnumerable<ICAHViewModel> RemovePlayer(string gamename, string playername, string userid)
         {
             Task<ICAHViewModel> pgvmtask = Task.Run(() => GC.RemovePlayerFromGame(gamename, playername, userid));
@@ -93,6 +100,7 @@ namespace Service.Controllers
         }
         [HttpGet]
         [Route("StartGame")]
+        [ResponseType(typeof(GameInfoViewModel))]
         public IEnumerable<ICAHViewModel> StartGame(string gamename)
         {
             Task<ICAHViewModel> gvmtask = Task.Run(()=>GC.StartGame(gamename));
@@ -104,6 +112,7 @@ namespace Service.Controllers
 
         [HttpGet]
         [Route("PlayerMove")]
+        [ResponseType(typeof(GameInfoViewModel))]
         public IEnumerable<ICAHViewModel> PlayerMove(string gamename, string playerid, string cardid)
         {
             Task<ICAHViewModel> gvmtask = Task.Run(() => GC.PlayerPickedCard(gamename, playerid, cardid));
@@ -113,6 +122,7 @@ namespace Service.Controllers
 
         [HttpGet]
         [Route("PickWinner")]
+        [ResponseType(typeof(GameInfoViewModel))]
         public IEnumerable<ICAHViewModel> PickWinner(string gamename,string winnerid)
         {
             Task<ICAHViewModel> gvmtask = Task.Run(() => GC.PickWinner(gamename, winnerid));
@@ -121,6 +131,7 @@ namespace Service.Controllers
         }
         [HttpGet]
         [Route("GetJVM")]
+        [ResponseType(typeof(JudgeViewModel))]
         public IEnumerable<ICAHViewModel> GetJVM(string gamename,string playerid)
         {
             Task<ICAHViewModel> jgvmtask = Task.Run(() => GC.JudgeList(gamename, playerid));
@@ -131,6 +142,7 @@ namespace Service.Controllers
         #region Postgame
         [HttpGet]
         [Route("EndGame")]
+        [ResponseType(typeof(EndGameViewModel))]
         public IEnumerable<ICAHViewModel> EndGame(string gamename, string playerid)
         {
             Task<ICAHViewModel> gvmtask = Task.Run(() => GC.EndGame(gamename,playerid));
